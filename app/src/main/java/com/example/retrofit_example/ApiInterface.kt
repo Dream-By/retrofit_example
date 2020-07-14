@@ -4,12 +4,11 @@ import com.example.retrofit_example.data.Books
 import retrofit2.Call
 import retrofit2.http.GET
 
-private const val JSONURL = "http://10.0.2.2:3000/"
+//private const val JSONURL = "http://10.0.2.2:3000/"
 
 interface ApiInterface {
 
     @GET("dbooks.json")
-    //public Call<List<Books>> getBooks()
     fun getBooks(): Call<List<Books>>
 
 }
