@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.retrofit_example.data.Book
 import com.example.retrofit_example.data.Books
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,30 +22,43 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val request = ServiceBuilder.buildService(ApiInterface::class.java)
-        val call = request.getBooks()
-        call.enqueue(object : Callback<List<Books>> {
+        val client = OkHttpClient.Builder().build()
 
-            override fun onResponse(call: Call<List<Books>>, response: Response<List<Books>>) {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:3000/")
+            .addConverterFactory(MoshiConverterFactory.create())
+            .client(client)
+            .build()
+
+        val request = retrofit.create(ApiInterface::class.java)
+
+        val call = request.getBooks()
+        call.enqueue(object : Callback <Books> {
+
+            override fun onResponse(call: Call <Books>, response: Response <Books>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@MainActivity, "OK", Toast.LENGTH_SHORT).show()
-                    val bookArrayList: List<Books>? = response.body()
+                    Toast.makeText(this@MainActivity, "is Successful", Toast.LENGTH_SHORT).show()
+                    System.out.println("isSuccessful - ")
+                    val bookArrayList: Books? = response.body()
                     if (bookArrayList != null) {
                         Handler(Looper.getMainLooper()).post {
-                            //textView.text = bookArrayList.get(i).books.joinToString("\n")
-                            textView.text = bookArrayList.map { Book::title }.toString()
+
+                            textView.text = bookArrayList.books.map { Book::title }.toString()
                         }
                     } else Toast.makeText(this@MainActivity, "ArrayList is Null", Toast.LENGTH_SHORT).show()
                 }
                 else Toast.makeText(this@MainActivity, "Response is Not Successful", Toast.LENGTH_SHORT).show()
             }
 
-                override fun onFailure(call: Call<List<Books>>, t: Throwable) {
-                    Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+
+                override fun onFailure(call: Call <Books>, t: Throwable) {
+                    Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_LONG).show()
                 }
             })
 
     }
 }
+
+
 
 
