@@ -14,6 +14,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -56,6 +57,19 @@ class MainActivity : AppCompatActivity() {
                     System.out.println("Error_message - " + t.message)
                 }
             })
+
+        button2.setOnClickListener{
+            val delFragment = DelFragment()
+            val booksforDel = Bundle()
+            booksforDel.putStringArrayList("books",booksforDel as ArrayList<String>)
+            delFragment.setArguments(booksforDel)
+            val manager = supportFragmentManager
+            delFragment.show(manager,"Delete Book")
+        }
+
+    }
+
+    fun delBooks (itemId : Int){
 
     }
 }
