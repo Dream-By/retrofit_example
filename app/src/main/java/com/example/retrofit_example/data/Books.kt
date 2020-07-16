@@ -1,10 +1,12 @@
 package com.example.retrofit_example.data
 
+import com.squareup.moshi.Json
+
 data class Books(
-    val books: List<Book>
+    val results: List<Book>
 )
 
 data class Book(
-    val id: Int,
-    val title: String
+        @field:Json (name = "id") val id: Int,
+        @field:Json (name = "title") val title: String
 )

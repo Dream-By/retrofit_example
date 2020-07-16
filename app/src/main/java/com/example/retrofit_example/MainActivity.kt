@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder().build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/")
+            .baseUrl("http://10.0.2.2:3000")
             .addConverterFactory(MoshiConverterFactory.create())
             .client(client)
             .build()
@@ -33,17 +33,17 @@ class MainActivity : AppCompatActivity() {
         val request = retrofit.create(ApiInterface::class.java)
 
         val call = request.getBooks()
-        call.enqueue(object : Callback <Books> {
+        call.enqueue(object : Callback <List<Book>> {
 
-            override fun onResponse(call: Call <Books>, response: Response <Books>) {
+            override fun onResponse(call: Call <List<Book>>, response: Response <List<Book>>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@MainActivity, "is Successful", Toast.LENGTH_SHORT).show()
                     System.out.println("isSuccessful - ")
-                    val bookArrayList: Books? = response.body()
+                    val bookArrayList: List<Book>? = response.body()
                     if (bookArrayList != null) {
                         Handler(Looper.getMainLooper()).post {
 
-                            textView.text = bookArrayList.books.map { Book::title }.toString()
+                            textView.text = bookArrayList.map (Book::title).joinToString ("\n" )
                         }
                     } else Toast.makeText(this@MainActivity, "ArrayList is Null", Toast.LENGTH_SHORT).show()
                 }
@@ -51,8 +51,9 @@ class MainActivity : AppCompatActivity() {
             }
 
 
-                override fun onFailure(call: Call <Books>, t: Throwable) {
+                override fun onFailure(call: Call <List<Book>>, t: Throwable) {
                     Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_LONG).show()
+                    System.out.println("Error_message - " + t.message)
                 }
             })
 
